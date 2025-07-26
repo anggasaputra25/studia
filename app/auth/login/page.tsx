@@ -5,7 +5,7 @@ export default function LoginPage() {
   return (
     <section className="relative overflow-hidden min-h-screen bg-background flex justify-center items-center p-4 bg-dark mb-20 md:mb-32 lg:mb-40">
       <div className="container mx-auto px-4">
-        <div className="bg-card border card-boder rounded-lg flex flex-col lg:flex-row items-center justify-between px-4 py-6 lg:px-12 lg:py-20 relative">
+        <div className="bg-card border card-border rounded-lg flex flex-col lg:flex-row items-center justify-between px-4 py-6 lg:px-12 lg:py-20 relative">
           <div className="lg:w-3/5">
             <h1 className="text-heading text-3xl md:text-4xl lg:text-5xl font-semibold leading-tight mb-6">
               Masuk ke Akunmu dan Mulai Belajar!

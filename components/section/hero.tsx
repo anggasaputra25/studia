@@ -5,7 +5,7 @@ export default function Hero() {
   return (
     <section className="relative w-full mb-20 md:mb-32 lg:mb-40 overflow-hidden z-10">
       <div className="container mx-auto px-4">
-        <div className="bg-card border card-boder rounded-lg mx-auto pt-12 lg:pt-0 ps-2 pe-2 lg:pe-0 lg:ps-12 flex flex-col lg:flex-row items-center justify-between relative z-10">
+        <div className="bg-card border card-border rounded-lg mx-auto pt-12 lg:pt-0 ps-2 pe-2 lg:pe-0 lg:ps-12 flex flex-col lg:flex-row items-center justify-between relative z-10">
           <div className="lg:w-3/5 text-center lg:text-left mb-12 lg:mb-0">
             <span className="inline-block bg-card text-white text-sm font-medium px-4 py-2 border card-border rounded-lg mb-6">
               Belajar dengan AI
@@ -21,13 +21,16 @@ export default function Hero() {
               pemahamanmu.
             </p>
 
-            <Link href="#courses" className="bg-primary hover:bg-primary-darker text-background font-bold py-3 px-8 rounded-lg drop-shadow-[0px_4px_0px#FFAE00] transition-all duration-300 transform">
+            <Link
+              href="#courses"
+              className="bg-primary hover:bg-primary-darker text-background font-bold py-3 px-8 rounded-lg drop-shadow-[0px_4px_0px#FFAE00] transition-all duration-300 transform"
+            >
               Jelajahi lagi
             </Link>
           </div>
 
           <div className="lg:w-2/5 flex justify-center lg:justify-end">
-          <Image
+            <Image
               src="/assets/image/hero-image.png"
               alt="Seorang wanita muda tersenyum sambil memegang laptop"
               width={500}

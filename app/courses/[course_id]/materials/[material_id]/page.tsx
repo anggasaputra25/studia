@@ -81,7 +81,7 @@ export default function Page() {
           <div className="w-full md:w-1/3 bg-card border border-card-border/10 rounded-lg p-6 shadow-lg flex flex-col gap-6 h-fit">
             <Link
               href={`/courses/${courseId}`}
-              className="flex justify-center items-center gap-2 bg-primary hover:bg-primary-darker text-background font-bold py-3 px-8 rounded-lg drop-shadow-[0px_4px_0px#FFAE00] transition-all duration-300 transform w-fit"
+              className="flex justify-center items-center gap-2 bg-primary hover:bg-primary-darker text-background font-bold py-2 px-6 rounded-lg drop-shadow-[0px_4px_0px#FFAE00] transition-all duration-300 transform w-fit"
             >
               <ChevronLeft /> Kembali
             </Link>

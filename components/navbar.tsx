@@ -109,7 +109,7 @@ export default function Navbar() {
                 alt="User Avatar"
                 width={40}
                 height={40}
-                className="rounded-full border-2 border-primary-darker object-cover"
+                className="rounded-full border border-primary-darker object-cover"
               />
               <span className="text-white font-medium">
                 {user.user_metadata?.full_name ||
@@ -200,7 +200,7 @@ export default function Navbar() {
                       alt="User Avatar"
                       width={32}
                       height={32}
-                      className="rounded-full border-2 border-primary-darker object-cover"
+                      className="rounded-full border border-primary-darker object-cover"
                     />
                     <span className="font-medium">
                       {user.user_metadata?.full_name ||

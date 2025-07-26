@@ -217,7 +217,7 @@ export default function Courses() {
                         </div>
                       </div>
                       <Link
-                        href={`/materials/${material.id}`}
+                        href={`/courses/${material.course_id}/materials/${material.id}`}
                         className="bg-primary hover:bg-primary-darker text-background font-semibold py-2 px-4 rounded-lg text-sm drop-shadow-[0px_4px_0px#FFAE00] transition-all duration-300"
                       >
                         Lihat

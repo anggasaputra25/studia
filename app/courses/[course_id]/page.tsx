@@ -7,6 +7,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 // pages/courses/[id]/discussion/page.tsx
 import dynamic from 'next/dynamic';
+import { QuizSection } from "@/components/quiz-section";
 
 const Discussion = dynamic(() => import('@/components/discussion'), { ssr: false });
 
@@ -53,7 +54,7 @@ export default function Page() {
       fetchCourse();
     }
   }, [courseId]);
-
+const courseIdStr = courseId?.toString();
   return (
     <main className="min-h-screen bg-dark text-white py-12 md:py-20">
       <div className="container mx-auto px-4">
@@ -87,7 +88,7 @@ export default function Page() {
           <div className="w-full md:w-1/3 bg-card border border-card-border/10 rounded-lg p-6 shadow-lg flex flex-col gap-6 h-fit">
             <Link
               href="/courses"
-              className="flex justify-center items-center gap-2 bg-primary hover:bg-primary-darker text-background font-bold py-3 px-8 rounded-lg drop-shadow-[0px_4px_0px#FFAE00] transition-all duration-300 transform w-fit"
+              className="flex justify-center items-center gap-2 bg-primary hover:bg-primary-darker text-background font-bold py-2 px-6 rounded-lg drop-shadow-[0px_4px_0px#FFAE00] transition-all duration-300 transform w-fit"
             >
               <ChevronLeft /> Kembali
             </Link>
@@ -178,7 +179,7 @@ export default function Page() {
           </div>
           <div className="w-full bg-card border border-card-border/10 rounded-lg p-6 shadow-lg flex flex-col gap-3">
             {(!tab || tab === "materials") && <MaterialPage />}
-            {tab === "quiz" && <h1>Quiz</h1>}
+            {(!tab || tab === "quiz" && courseIdStr) && <QuizSection courseId={courseIdStr} />}
             {(!tab || tab === "discussion") && <Discussion />}
           </div>
         </div>
