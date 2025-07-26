@@ -52,7 +52,7 @@ export default function Page() {
             <div className="bg-neutral-900 p-5 rounded border mb-5">
                 <h1 className="text-3xl">{course?.name}</h1>
                 <p>{course?.program}</p>
-                <div className="flex justify-between mt-10">
+                <div className="flex justify-between mt-10 flex-col md:flex-row gap-5">
                     <div>
                         <p>Program Studi</p>
                         <p>{course?.program}</p>
@@ -71,8 +71,8 @@ export default function Page() {
                     </div>
                 </div>
             </div>
-            <div className="flex gap-5">
-                <div className="w-1/3 rounded border bg-neutral-900 p-5 flex flex-col gap-5 h-fit">
+            <div className="flex gap-5 flex-col md:flex-row">
+                <div className="w-full md:w-1/3 rounded border bg-neutral-900 p-5 flex flex-col gap-5 h-fit">
                     <button className="py-1 px-2 bg-yellow-600 rounded text-black w-fit">Kembali</button>
                     <Link href={`/courses/${courseId}?tab=materials`} >Materi</Link>
                     <Link href={`/courses/${courseId}?tab=quiz`} >Kuis</Link>
