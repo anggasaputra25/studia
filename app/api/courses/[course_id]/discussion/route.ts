@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import { NextRequest, NextResponse } from "next/server";
-import { genaiText } from "@/lib/discussion/genai";
+import { genaiFile, genaiText } from "@/lib/discussion/genai";
 
 //API for insert data to discussion
 export async function POST(req: NextRequest, {params}: {params: {course_id:string}}) {
@@ -27,6 +27,18 @@ export async function POST(req: NextRequest, {params}: {params: {course_id:strin
         answer = await genaiText(prompt, course_id);
 
         //Generate AI file
+        if(file){
+            let question = `Kamu adalah asisten AI yang bertugas menjawab pertanyaan pengguna berdasarkan file yang telah mereka lampirkan. File tersebut sudah saya bacakan dan sampaikan langsung kepadamu, seolah-olah kamu membacanya sendiri.
+            Jawablah pertanyaan pengguna dengan jelas, langsung, dan berdasarkan isi file tersebut. Hindari menyebut bahwa kamu mendapatkan ringkasan atau bantuan dari pihak lain.
+            Pertanyaan dari pengguna: ${prompt}
+            Berikut adalah isi file yang dilampirkan oleh pengguna:`
+
+            for(const fileData of file){
+                let answerFile = await genaiFile(fileData.name, fileData.path);
+                question += `File ${fileData.name}: ${answerFile}, `
+            }
+            answer = await genaiText(question, course_id);
+        }
 
         //Insert data
         const { data:disData, error: disError } = await supabase

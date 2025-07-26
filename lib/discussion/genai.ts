@@ -1,7 +1,7 @@
 import { genAI } from "../genai/genai";
 import { createClient } from "../supabase/server";
 
-//Generate response from gen AI
+//Generate response text from gen AI
 async function genaiText(prompt: string, course_id: string) {
     const supabase = await createClient();
 
@@ -47,4 +47,27 @@ async function genaiText(prompt: string, course_id: string) {
     return response.text;
 }
 
-export { genaiText };
+//Generate response file from gen AI
+async function genaiFile(fileName:string, fileUrl:string) {
+    const pdfResp = await fetch(fileUrl)
+        .then((response) => response.arrayBuffer());
+
+    const contents = [
+        { text: `Jelaskan apa isi dari file ini secara detail, nama file ini adalah ${fileName}` },
+        {
+            inlineData: {
+                mimeType: 'application/pdf',
+                data: Buffer.from(pdfResp).toString("base64")
+            }
+        }
+    ];
+
+    const response = await genAI.models.generateContent({
+        model: "gemini-2.5-flash",
+        contents: contents
+    });
+
+    return response.text;
+}
+
+export { genaiText, genaiFile };
