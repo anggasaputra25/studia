@@ -344,7 +344,7 @@ export function DoQuiz() {
             <Button
               onClick={() =>
                 router.replace(
-                  `?tab=quiz&q=${quizId}&n=${number - 1}&attempt=true`
+                  `?tab=quiz&q=${quizId}&n=${number - 1}&attempt=true`, {scroll: false}
                 )
               }
               disabled={number <= 1}
