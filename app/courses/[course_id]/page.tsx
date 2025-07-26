@@ -1,5 +1,5 @@
 'use client'
-import type { Discussion } from "@/app/types/discussion";
+import type { Discussion, DiscussionFile, Material, MaterialFiles } from "@/app/types/discussion";
 import { createClient } from "@/lib/supabase/client";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -36,10 +36,15 @@ const Discussion = () => {
 
     //Initial get data
     const [discussionData, setDiscussionData] = useState<Discussion[]>([]);
+    const [materialData, setMaterialData] = useState<Material[]>([]);
+    const [materialFiles, setMaterialFiles] = useState<MaterialFiles[]>([]);
 
     //Input state
     const [inputPrompt, setInputPrompt] = useState("");
     const [inputPromptNew, setInputPromptNew] = useState("");
+
+    //Initial file
+    const [file, setFile] = useState<DiscussionFile[]>([]);
 
     //Bootomref
     const bottomRef = useRef<HTMLDivElement>(null);
@@ -78,9 +83,58 @@ const Discussion = () => {
             }
         }
 
-        //Get materials data
+        //Get material data
+        const fetchMaterial = async () => {
+            try {
+                const { data: dataDis, error: errorDis } = await supabase
+                    .from("materials")
+                    .select("*")
+                    .eq("course_id", course_id)
+                    .order("created_at", { ascending: true });
+                if (errorDis) {
+                    throw new Error(errorDis.message);
+                }
+                setMaterialData(dataDis);
+                // Scroll to bottom
+                setTimeout(() => {
+                    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } catch (error: any) {
+                //Handle errors
+                setError(error.message);
+                console.log(error);
+            } finally {
+                setLoadingFetch(false);
+            }
+        }
 
-        fetchDiscussion()
+        //Get material file
+        const fetchMaterialFile = async () => {
+            try {
+                const { data: dataDis, error: errorDis } = await supabase
+                    .from("material_files")
+                    .select("*")
+                    .order("created_at", { ascending: true });
+                if (errorDis) {
+                    throw new Error(errorDis.message);
+                }
+                setMaterialFiles(dataDis);
+                // Scroll to bottom
+                setTimeout(() => {
+                    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } catch (error: any) {
+                //Handle errors
+                setError(error.message);
+                console.log(error);
+            } finally {
+                setLoadingFetch(false);
+            }
+        }
+
+        fetchDiscussion();
+        fetchMaterial();
+        fetchMaterialFile();
     }, [course_id]);
 
     //Send message
@@ -94,7 +148,10 @@ const Discussion = () => {
                 headers: {
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({ prompt: inputPrompt })
+                body: JSON.stringify({
+                    prompt: inputPrompt,
+                    file: file || null
+                })
             });
 
             const json = await res.json();
@@ -115,7 +172,6 @@ const Discussion = () => {
             setLoadingSendMessage(false);
         }
     };
-
 
     //Regenerate answer
     const regenerateAnswer = async (prompt: string, discussion_id: string) => {
@@ -189,7 +245,26 @@ const Discussion = () => {
         navigator.clipboard.writeText(value)
     };
 
+    const toggleFile = (id: string, name: string, path: string, from: string) => {
+        setFile(prev => {
+            const exists = prev.some(f =>
+                f.id === id &&
+                f.name === name &&
+                f.path === path &&
+                f.from === from
+            );
 
+            if (exists) {
+                // Hapus file jika sudah ada
+                return prev.filter(f =>
+                    !(f.id === id && f.name === name && f.path === path && f.from === from)
+                );
+            } else {
+                // Tambahkan file
+                return [...prev, { id, name, path, from }];
+            }
+        });
+    };
 
 
     if (loadingFetch) return (
@@ -343,18 +418,36 @@ const Discussion = () => {
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>Sederhanakan Materi</AlertDialogTitle>
+                                        <AlertDialogTitle>Pilih Materi</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            Mulai sederhanakan dengan bantuan AI.
+                                            Pelajari materi dengan bantuan AI.
                                         </AlertDialogDescription>
 
                                         <AlertDialogTitle>Pilih file materi dari kelas</AlertDialogTitle>
                                         <div className="flex gap-3 flex-wrap">
-                                            <button
-                                                className={`border p-2 rounded-sm transition "bg-neutral-900 text-white"`}
-                                            >
-                                                Testing
-                                            </button>
+                                            {materialData.map(item =>
+                                                materialFiles
+                                                    .filter(fileItem => fileItem.material_id === item.id)
+                                                    .map(fileItem => {
+                                                        const isSelected = file.some(f =>
+                                                            f.id === fileItem.id &&
+                                                            f.name === fileItem.file_name &&
+                                                            f.path === fileItem.file_url &&
+                                                            f.from === 'material'
+                                                        );
+
+                                                        return (
+                                                            <button
+                                                                key={fileItem.id}
+                                                                onClick={() => toggleFile(fileItem.id, fileItem.file_name, fileItem.file_url, 'material')}
+                                                                className={`border p-2 rounded-sm transition ${isSelected ? 'bg-green-700 text-white' : 'bg-neutral-900 text-white'
+                                                                    }`}
+                                                            >
+                                                                {fileItem.file_name}
+                                                            </button>
+                                                        );
+                                                    })
+                                            )}
                                         </div>
 
                                         <AlertDialogTitle>Upload file</AlertDialogTitle>
