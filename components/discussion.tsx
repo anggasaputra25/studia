@@ -311,7 +311,7 @@ const Discussion = () => {
     const editAnswer = async (discussion_id: string) => {
         setLoadingUpdatePrompt(true);
         try {
-            const res = await fetch(`/api/courses/${course_id}/discussion/${discussion_id}/regenerate`, {
+            const res = await fetch(`/api/courses/${course_id}/discussion/${discussion_id}/update`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
