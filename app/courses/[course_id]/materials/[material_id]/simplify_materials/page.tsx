@@ -1,225 +1,154 @@
 'use client'
-import { useParams, useSearchParams } from "next/navigation";
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
-import { Button } from "@/components/ui/button"
-import { Brain, LucideNotepadText, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import SimplifyMaterialButton from "@/components/simplify-material-button";
 import { createClient } from "@/lib/supabase/client";
+import { LucideNotepadText, User } from "lucide-react";
+import Link from "next/link";
+import { useParams, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
-interface MaterialFile {
+interface Material {
     id: string;
-    material_id: string;
-    file_name: string;
-    file_path: string;
-    file_url: string;
+    name: string;
+    course_id: string;
     created_at: string;
 }
 
+interface Course {
+    id: string;
+    name: string;
+    program: string;
+    instructor: string;
+    weeks: string;
+    time_start: string;
+    time_end: string;
+    created_at: string;
+    student_count: number;
+}
 
 
 export default function Page() {
     const params = useParams();
     const searchParams = useSearchParams();
-    const fileInputRef = useRef<HTMLInputElement | null>(null);
 
-    const [files, setFiles] = useState<File[]>([]);
-    const [materialFiles, setMaterialFiles] = useState<MaterialFile[]>([])
-    const [selectedUrls, setSelectedUrls] = useState<string[]>([]);
-    const [loadingGenerate, setLoadingGenerate] = useState<boolean>(false);
+    const [course, setCourse] = useState<Course>();
+    const [materials, setMaterials] = useState<Material[]>([]);
 
     const tab = searchParams.get('tab');
     const courseId = params.course_id;
     const material_id = params.material_id;
 
-    const toggleUrl = (url: string) => {
-        setSelectedUrls(prev =>
-            prev.includes(url)
-                ? prev.filter(item => item !== url)
-                : [...prev, url]
-        );
-    };
-
     useEffect(() => {
-        const fetchMaterialFiles = async () => {
+        const fetchCourse = async () => {
             const supabase = createClient();
-            const { data: material_files, error } = await supabase
-                .from('material_files')
+
+            const { data, error } = await supabase
+                .from('courses')
                 .select('*')
-                .eq('material_id', material_id)
+                .eq('id', courseId)
+                .single()
+
             if (error) {
-                console.error("Error mengambil data material_files: ", error)
+                console.log("Gagal Fetch Courses");
                 return;
             }
-            setMaterialFiles(material_files)
+            setCourse(data);
         }
-        if (material_id) {
-            fetchMaterialFiles()
+        const fetchMaterials = async () => {
+            const supabase = createClient();
+            const { data, error } = await supabase
+                .from('materials')
+                .select('*')
+                .eq('course_id', courseId)
+
+            if (error) {
+                console.log("Gagal Fetch Materials");
+                return;
+            }
+
+            setMaterials(data);
         }
-    }, [material_id])
-
-    const handleFile = () => {
-        if (fileInputRef.current) {
-            fileInputRef.current.click();
+        if (courseId) {
+            fetchMaterials();
+            fetchCourse();
         }
-    };
+    }, [courseId])
 
-    const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newFile = event.target.files?.[0];
-        if (newFile) {
-            setFiles(prev => [...prev, newFile]);
-        }
-    };
+    useEffect(() => {
+        console.log(materials);
+    }, [materials])
+    useEffect(() => {
+        console.log(course);
+    }, [course])
 
-    const handleRemoveFile = (index: number) => {
-        setFiles(prev => prev.filter((_, i) => i !== index));
-    };
+    // Set Time
+    function timeAgo(dateString: string): string {
+        const now = new Date();
+        const date = new Date(dateString);
+        const diff = Math.floor((now.getTime() - date.getTime()) / 1000); // dalam detik
 
-    const handleCancel = () => {
-        setFiles([]);
+        if (diff < 60) return `Baru saja`;
+        if (diff < 3600) return `${Math.floor(diff / 60)} menit yang lalu`;
+        if (diff < 86400) return `${Math.floor(diff / 3600)} jam yang lalu`;
+        if (diff < 604800) return `${Math.floor(diff / 86400)} hari yang lalu`;
+        if (diff < 2592000) return `${Math.floor(diff / 604800)} minggu yang lalu`;
+        if (diff < 31536000) return `${Math.floor(diff / 2592000)} bulan yang lalu`;
+        return `${Math.floor(diff / 31536000)} tahun yang lalu`;
     }
 
-    const handleSubmit = async () => {
-        if (files.length === 0 && selectedUrls.length === 0) {
-            alert("Silakan pilih setidaknya satu file atau URL terlebih dahulu.");
-            return;
-        }
-
-        setLoadingGenerate(true)
-
-        try {
-            const formData = new FormData();
-            files.forEach((file) => {
-                formData.append("files", file);
-            });
-            selectedUrls.forEach((url) => {
-                formData.append("urls", url);
-            });
-
-            const res = await fetch(`http://localhost:3000/api/courses/${courseId}/materials/${material_id}/simplify_materials`, {
-                method: "POST",
-                body: formData,
-            });
-
-            const result = await res.json();
-            console.log(result);
-
-            setFiles([]);
-            setSelectedUrls([]);
-        } catch (error) {
-            console.log("Gagal melakukan submit: ", error)
-        } finally {
-            setLoadingGenerate(false);
-        }
-    };
-
-
     return (
-        <>
-            {/* Dialog Add */}
-            <AlertDialog>
-                <AlertDialogTrigger asChild>
-                    <Button variant="outline">Mulai</Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Sederhanakan Materi</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Mulai sederhanakan dengan bantuan AI.
-                        </AlertDialogDescription>
-
-                        <AlertDialogTitle>Pilih file materi dari kelas</AlertDialogTitle>
-                        <div className="flex gap-3 flex-wrap">
-                            {materialFiles.map((file, index) => {
-                                const isSelected = selectedUrls.includes(file.file_url);
-                                return (
-                                    <button
-                                        key={index}
-                                        onClick={() => toggleUrl(file.file_url)}
-                                        className={`border p-2 rounded-sm transition ${isSelected ? "bg-neutral-900 text-white" : ""
-                                            }`}
-                                    >
-                                        {file.file_name}
-                                    </button>
-                                );
-                            })}
-                        </div>
-
-                        <AlertDialogTitle>Upload file</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Upload file tambahanmu di sini
-                        </AlertDialogDescription>
-
-                        {/* Hidden File Input */}
-                        <input
-                            ref={fileInputRef}
-                            type="file"
-                            accept="application/pdf"
-                            style={{ display: 'none' }}
-                            onChange={handleFileChange}
-                        />
-
-                        {/* Trigger Button */}
-                        <button
-                            onClick={handleFile}
-                            className="w-full p-2 rounded-sm bg-neutral-900 flex flex-col justify-center items-center border border-dashed"
-                        >
-                            <LucideNotepadText className="py-4 w-20 h-20 border rounded-sm mb-2" />
-                            <p>Klik untuk Upload File</p>
-                            <AlertDialogDescription>
-                                File pdf
-                            </AlertDialogDescription>
-                        </button>
-
-                        {/* File List */}
-                        <div className="flex gap-2 flex-col mt-4">
-                            {files.map((file, index) => (
-                                <div
-                                    key={index}
-                                    className="flex gap-2 items-center p-2 rounded"
-                                >
-                                    <LucideNotepadText className="w-9 h-9 border p-1.5 rounded-sm bg-neutral-900" />
-                                    <div className="flex-1">
-                                        <p className="text-sm">{file.name}</p>
-                                        <AlertDialogDescription className="text-xs">
-                                            {(file.size / (1024 * 1024)).toFixed(2)} MB
-                                        </AlertDialogDescription>
-                                    </div>
-                                    <button onClick={() => handleRemoveFile(index)}>
-                                        <X className="w-6 h-6" />
-                                    </button>
+        <div className="m-5">
+            <div className="bg-neutral-900 p-5 rounded border mb-5">
+                <h1 className="text-3xl">{course?.name}</h1>
+                <p>{course?.program}</p>
+                <div className="flex justify-between mt-10">
+                    <div>
+                        <p>Program Studi</p>
+                        <p>{course?.program}</p>
+                    </div>
+                    <div>
+                        <p>Dosen Pengajar</p>
+                        <p>{course?.instructor}</p>
+                    </div>
+                    <div>
+                        <p>Jumlah Mahasiswa</p>
+                        <p>{course?.student_count}</p>
+                    </div>
+                    <div>
+                        <p>Jadwal</p>
+                        <p>{`${course?.weeks}, ${course?.time_start} - ${course?.time_end}`}</p>
+                    </div>
+                </div>
+            </div>
+            <div className="flex gap-5">
+                <div className="w-1/3 rounded border bg-neutral-900 p-5 flex flex-col gap-5 h-fit">
+                    <button className="py-1 px-2 bg-yellow-600 rounded text-black w-fit">Kembali</button>
+                    <Link href={`/courses/${courseId}?tab=materials`} >Materi</Link>
+                    <Link href={`/courses/${courseId}?tab=quiz`} >Kuis</Link>
+                    <Link href={`/courses/${courseId}?tab=discussion`} >Diskusi</Link>
+                </div>
+                <div className="w-full rounded border bg-neutral-900 p-5 flex flex-col gap-3">
+                    {materials.map((material, index) => (
+                        <div className="p-5 border rounded" key={index}>
+                            <div className="flex items-center gap-3">
+                                <User className="border rounded-full p-2 w-10 h-10 bg-neutral-800" />
+                                <div>
+                                    <p>{`${course?.instructor} menambahkan materi pada > ${course?.name}`}</p>
+                                    <p>{course?.created_at ? timeAgo(course.created_at) : ""}</p>
                                 </div>
-                            ))}
+                            </div>
+                            <div className="mt-5">
+                                <div className="flex items-center gap-3">
+                                    <LucideNotepadText className="border rounded p-2 w-10 h-10 bg-neutral-800" />
+                                    <div>
+                                        <p>Materi cara nabung</p>
+                                        <p>Materi.pdf</p>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel onClick={handleCancel}>Batal</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleSubmit} className="bg-yellow-400">Ya</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
-
-            {/* Loading */}
-            <AlertDialog open={loadingGenerate}>
-                <AlertDialogContent className="h-1/2">
-                    <AlertDialogHeader className="flex flex-col justify-center items-center">
-                        <Brain className="text-yellow-500 w-20 h-20 mb-5 animate-spin ease-linear" style={{ animationDuration: "10s" }} />
-                        <AlertDialogTitle>Materi sedang disederhanakan</AlertDialogTitle>
-                        <AlertDialogDescription className="text-center">
-                            Tunggu hingga selesai. Ini mungkin memakan<br />waktu yang banyak.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                </AlertDialogContent>
-            </AlertDialog>
-        </>
+                    ))}
+                </div>
+            </div>
+        </div>
     )
 }

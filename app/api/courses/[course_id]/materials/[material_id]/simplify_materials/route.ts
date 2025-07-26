@@ -63,7 +63,7 @@ export async function POST(req: NextRequest, { params }: { params: { course_id: 
                 const response = await geminiDocument(buffer);
                 combinedText += `${response.text}\n\n`;
             } else {
-                console.warn("Nilai bukan URL string:", url);
+                console.warn("Value not string:", url);
             }
         }
     }
@@ -85,8 +85,8 @@ export async function POST(req: NextRequest, { params }: { params: { course_id: 
         .select()
 
     if (error) {
-        return NextResponse.json({ message: "Tidak dapat insert data ke simplify materials", error: error })
+        return NextResponse.json({ message: "Failed insert data to simplify materials", error: error })
     }
 
-    return NextResponse.json({ message: "Upload sukses", data: data });
+    return NextResponse.json({ message: "Upload success", data: data });
 }

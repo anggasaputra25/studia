@@ -24,7 +24,7 @@
     "nextjs-toploader": "^3.8.16",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-markdown": "^10.1.0",
+    "react-markdown": "^8.0.7",
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.0",
     "zod": "^4.0.10"
