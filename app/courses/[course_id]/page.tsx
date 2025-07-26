@@ -6,10 +6,8 @@ import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 // pages/courses/[id]/discussion/page.tsx
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import { QuizSection } from "@/components/quiz-section";
-
-const Discussion = dynamic(() => import('@/components/discussion'), { ssr: false });
 
 
 
@@ -54,7 +52,7 @@ export default function Page() {
       fetchCourse();
     }
   }, [courseId]);
-const courseIdStr = courseId?.toString();
+  const courseIdStr = courseId?.toString();
   return (
     <main className="min-h-screen bg-dark text-white py-12 md:py-20">
       <div className="container mx-auto px-4">
@@ -80,7 +78,12 @@ const courseIdStr = courseId?.toString();
             </div>
             <div>
               <p className="text-lg">Jadwal</p>
-              <p className="text-muted-foreground text-sm">{`${course?.weeks}, ${course?.time_start?.slice(0, 5)} - ${course?.time_end?.slice(0, 5)}`}</p>
+              <p className="text-muted-foreground text-sm">{`${
+                course?.weeks
+              }, ${course?.time_start?.slice(0, 5)} - ${course?.time_end?.slice(
+                0,
+                5
+              )}`}</p>
             </div>
           </div>
         </div>
@@ -179,8 +182,10 @@ const courseIdStr = courseId?.toString();
           </div>
           <div className="w-full bg-card border border-card-border/10 rounded-lg p-6 shadow-lg flex flex-col gap-3">
             {(!tab || tab === "materials") && <MaterialPage />}
-            {(!tab || tab === "quiz" && courseIdStr) && <QuizSection courseId={courseIdStr} />}
-            {(!tab || tab === "discussion") && <Discussion />}
+            {tab === "quiz" && courseIdStr && (
+              <QuizSection courseId={courseIdStr} />
+            )}
+            {tab === "discussion" && <Discussion />}
           </div>
         </div>
       </div>
