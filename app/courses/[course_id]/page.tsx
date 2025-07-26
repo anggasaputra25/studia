@@ -1,10 +1,16 @@
 "use client";
 import MaterialPage from "@/components/materials";
 import { createClient } from "@/lib/supabase/client";
-import { ChevronLeft, File } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { useParams, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+// pages/courses/[id]/discussion/page.tsx
+import dynamic from 'next/dynamic';
+
+const Discussion = dynamic(() => import('@/components/discussion'), { ssr: false });
+
+
 
 interface Course {
   id: string;
@@ -173,7 +179,7 @@ export default function Page() {
           <div className="w-full bg-card border border-card-border/10 rounded-lg p-6 shadow-lg flex flex-col gap-3">
             {(!tab || tab === "materials") && <MaterialPage />}
             {tab === "quiz" && <h1>Quiz</h1>}
-            {tab === "discussion" && <h1>Discussion</h1>}
+            {(!tab || tab === "discussion") && <Discussion />}
           </div>
         </div>
       </div>

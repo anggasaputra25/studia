@@ -10,7 +10,6 @@ export default {
   ],
   theme: {
     extend: {
-      
       colors: {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
@@ -54,9 +53,9 @@ export default {
           "5": "hsl(var(--chart-5))",
         },
         // Warna Kustom Tambahan Anda
-        'custom-white': "hsl(var(--custom-white))",
-        'custom-dark': "hsl(var(--custom-dark))",
-        'custom-dark-font': "hsl(var(--custom-dark-font))",
+        "custom-white": "hsl(var(--custom-white))",
+        "custom-dark": "hsl(var(--custom-dark))",
+        "custom-dark-font": "hsl(var(--custom-dark-font))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -67,6 +66,6 @@ export default {
   },
   plugins: [
     require("tailwindcss-animate"),
-    // require("@tailwindcss-typography") // Hapus komentar jika Anda menggunakan @tailwindcss/typography
+    require("@tailwindcss/typography")
   ],
 } satisfies Config;
