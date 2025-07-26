@@ -104,7 +104,7 @@ export default function SimplifyMaterialButton() {
                 formData.append("urls", url);
             });
 
-            const res = await fetch(`http://localhost:3000/api/courses/${courseId}/materials/${material_id}/simplify_materials`, {
+            const res = await fetch(`/api/courses/${courseId}/materials/${material_id}/simplify_materials`, {
                 method: "POST",
                 body: formData,
             });
