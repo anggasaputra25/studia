@@ -1,5 +1,5 @@
 'use client'
-import type { Discussion, DiscussionFile, Material, MaterialFiles } from "@/app/types/discussion";
+import type { AdditionalDiscussionFiles, Discussion, DiscussionFile, DiscussionFiles, Material, MaterialFiles } from "@/app/types/discussion";
 import { createClient } from "@/lib/supabase/client";
 import { useParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -36,6 +36,8 @@ const Discussion = () => {
 
     //Initial get data
     const [discussionData, setDiscussionData] = useState<Discussion[]>([]);
+    const [discussionDataFile, setDiscussionDataFile] = useState<DiscussionFiles[]>([]);
+    const [additionalDiscussionDataFile, setAdditionalDiscussionDataFile] = useState<AdditionalDiscussionFiles[]>([]);
     const [materialData, setMaterialData] = useState<Material[]>([]);
     const [materialFiles, setMaterialFiles] = useState<MaterialFiles[]>([]);
 
@@ -71,6 +73,54 @@ const Discussion = () => {
                     throw new Error(errorDis.message);
                 }
                 setDiscussionData(dataDis);
+                // Scroll to bottom
+                setTimeout(() => {
+                    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } catch (error: any) {
+                //Handle errors
+                setError(error.message);
+                console.log(error);
+            } finally {
+                setLoadingFetch(false);
+            }
+        }
+
+        //Get discussion files data
+        const fetchDiscussionFile = async () => {
+            try {
+                const { data: dataDis, error: errorDis } = await supabase
+                    .from("discussion_files")
+                    .select("*")
+                    .order("created_at", { ascending: true });
+                if (errorDis) {
+                    throw new Error(errorDis.message);
+                }
+                setDiscussionDataFile(dataDis);
+                // Scroll to bottom
+                setTimeout(() => {
+                    bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
+            } catch (error: any) {
+                //Handle errors
+                setError(error.message);
+                console.log(error);
+            } finally {
+                setLoadingFetch(false);
+            }
+        }
+
+        //Get additional discussion files data
+        const fetchAdditionalDiscussionFile = async () => {
+            try {
+                const { data: dataDis, error: errorDis } = await supabase
+                    .from("additional_discussion_files")
+                    .select("*")
+                    .order("created_at", { ascending: true });
+                if (errorDis) {
+                    throw new Error(errorDis.message);
+                }
+                setAdditionalDiscussionDataFile(dataDis);
                 // Scroll to bottom
                 setTimeout(() => {
                     bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -134,8 +184,10 @@ const Discussion = () => {
         }
 
         fetchDiscussion();
+        fetchDiscussionFile();
         fetchMaterial();
         fetchMaterialFile();
+        fetchAdditionalDiscussionFile();
     }, [course_id]);
 
     //Send message
@@ -351,6 +403,39 @@ const Discussion = () => {
                             {discussionData.map(item => (
                                 <div key={item.id} className="space-y-6">
                                     {/* User Message */}
+                                    <div className="flex gap-3 justify-end">
+                                        {
+                                            discussionDataFile.map(disFile => (
+                                                disFile.discussion_id == item.id ?
+                                                    materialFiles.map(matFile => (
+                                                        disFile.mf_id == matFile.id ?
+                                                            <a href={matFile.file_url} key={matFile.id} target="_blank" className="justify-end mt-0 flex items-center text-sm text-gray-400">
+                                                                <div className="flex items-center bg-[#1a1a1a] rounded-lg px-3 py-2 border border-gray-500 hover:bg-orange-500 hover:text-white transition-all ease">
+                                                                    <Paperclip className="w-4 h-4" />
+                                                                    <span>
+                                                                        {matFile.file_name}
+                                                                    </span>
+                                                                </div>
+                                                            </a> : ''
+                                                    ))
+                                                    : ''
+                                            ))
+                                        }
+                                        {
+                                            additionalDiscussionDataFile.map(disFile => (
+                                                disFile.discussion_id == item.id ?
+                                                    <a href={disFile.file_path} key={disFile.id} target="_blank" className="justify-end mt-0 flex items-center text-sm text-gray-400">
+                                                        <div className="flex items-center bg-[#1a1a1a] rounded-lg px-3 py-2 border border-gray-500 hover:bg-orange-500 hover:text-white transition-all ease">
+                                                            <Paperclip className="w-4 h-4" />
+                                                            <span>
+                                                                {disFile.file_name}
+                                                            </span>
+                                                        </div>
+                                                    </a>
+                                                    : ''
+                                            ))
+                                        }
+                                    </div>
                                     <div className="flex justify-end">
                                         <div className="max-w-2xl">
                                             <div className="bg-[#2a2a2a] rounded-xl px-4 py-3 relative group">
@@ -560,13 +645,13 @@ const Discussion = () => {
                                 {
                                     [...file, ...additionalFile].length > 0 && (
                                         <>
-                                            {/* Tampilkan file pertama */}
+                                            {/* Show 1 file */}
                                             <div className="mt-2 flex items-center space-x-2 text-sm text-gray-400">
                                                 <div className="flex items-center space-x-2 bg-[#1a1a1a] rounded-lg px-3 py-2">
                                                     <Paperclip className="w-4 h-4" />
                                                     <span>
                                                         {
-                                                            // Ambil nama dari DiscussionFile atau File
+                                                            // Get name from DiscussionFile or File
                                                             'name' in [...file, ...additionalFile][0]
                                                                 ? [...file, ...additionalFile][0].name
                                                                 : [...file, ...additionalFile][0].file_name

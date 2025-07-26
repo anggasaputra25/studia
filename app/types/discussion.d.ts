@@ -20,6 +20,20 @@ interface MaterialFiles{
     file_url: string,
     created_at: string
 }
+interface DiscussionFiles{
+    id: string,
+    discussion_id: string,
+    mf_id: string,
+    created_at: string
+}
+interface AdditionalDiscussionFiles{
+    id: string,
+    discussion_id: string,
+    file_name: string,
+    file_type: string,
+    file_path: string,
+    created_at: string
+}
 interface DiscussionFile{
     id: string,
     name: string,
@@ -27,4 +41,4 @@ interface DiscussionFile{
     from: string
 }
 
-export {Discussion, Material, MaterialFiles, DiscussionFile}
+export {Discussion, Material, MaterialFiles, DiscussionFiles, AdditionalDiscussionFiles, DiscussionFile}
