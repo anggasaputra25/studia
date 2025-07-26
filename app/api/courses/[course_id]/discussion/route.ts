@@ -64,7 +64,8 @@ export async function POST(req: NextRequest, {params}: {params: {course_id:strin
                     .select()
                     if(error){
                         return NextResponse.json({
-                            error: error
+                            message: error.message,
+                            detailError: error
                         });
                     }
                 }else{
@@ -76,7 +77,8 @@ export async function POST(req: NextRequest, {params}: {params: {course_id:strin
                     .select()
                     if(error){
                         return NextResponse.json({
-                            error: error
+                            message: error.message,
+                            detailError: error
                         });
                     }
                 }
