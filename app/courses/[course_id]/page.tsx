@@ -192,6 +192,10 @@ const Discussion = () => {
 
     //Send message
     const sendMessage = async () => {
+        // Scroll to bottom
+        setTimeout(() => {
+            bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
+        }, 100);
         if (!inputPrompt.trim()) return;
         let fileData: DiscussionFile[] = []
 
@@ -502,6 +506,19 @@ const Discussion = () => {
                     )}
                 </div>
             </div>
+            {loadingSendMessage && (
+                <div className="max-w-4xl mx-auto px-4 py-4">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-[#1a1a1a] rounded-xl px-4 py-3 border border-gray-700">
+                            <div className="flex items-center space-x-1">
+                                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+                                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
             <div ref={bottomRef} />
 
             {/* Input Area */}
