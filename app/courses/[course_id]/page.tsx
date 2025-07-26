@@ -179,8 +179,8 @@ const courseIdStr = courseId?.toString();
           </div>
           <div className="w-full bg-card border border-card-border/10 rounded-lg p-6 shadow-lg flex flex-col gap-3">
             {(!tab || tab === "materials") && <MaterialPage />}
-            {(!tab || tab === "quiz" && courseIdStr) && <QuizSection courseId={courseIdStr} />}
-            {(!tab || tab === "discussion") && <Discussion />}
+            {(tab === "quiz" && courseIdStr) && <QuizSection courseId={courseIdStr} />}
+            {(tab === "discussion") && <Discussion />}
           </div>
         </div>
       </div>
