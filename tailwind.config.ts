@@ -22,8 +22,9 @@ export default {
           foreground: "hsl(var(--popover-foreground))",
         },
         primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+          DEFAULT: "hsl(var(--primary))", // FFCB67
+          foreground: "hsl(var(--primary-foreground))", // Warna foreground yang ada untuk primary
+          darker: "hsl(var(--primary-darker))", // FFAE00
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -51,6 +52,10 @@ export default {
           "4": "hsl(var(--chart-4))",
           "5": "hsl(var(--chart-5))",
         },
+        // Warna Kustom Tambahan Anda
+        'custom-white': "hsl(var(--custom-white))",
+        'custom-dark': "hsl(var(--custom-dark))",
+        'custom-dark-font': "hsl(var(--custom-dark-font))",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -61,6 +66,6 @@ export default {
   },
   plugins: [
     require("tailwindcss-animate"),
-    require("@tailwindcss-typography")
+    // require("@tailwindcss-typography") // Hapus komentar jika Anda menggunakan @tailwindcss/typography
   ],
 } satisfies Config;

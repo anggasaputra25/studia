@@ -1,23 +1,15 @@
-import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+"use client"
+
+import { Urbanist } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import "./globals.css";
 import NextTopLoader from 'nextjs-toploader';
 import { Toaster } from "sonner";
+import { usePathname } from "next/navigation";
+import Navbar from "@/components/navbar";
+import Footer from "@/components/footer";
 
-const defaultUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "http://localhost:3000";
-
-export const metadata: Metadata = {
-  metadataBase: new URL(defaultUrl),
-  title: "Next.js and Supabase Starter Kit",
-  description: "The fastest way to build apps with Next.js and Supabase",
-};
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  display: "swap",
+const urbanist = Urbanist({
   subsets: ["latin"],
 });
 
@@ -26,18 +18,24 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();  
+  
+  const isLoginPage = pathname.includes("auth/login");  
+
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.className} antialiased`}>
+      <body className={`${urbanist.className} antialiased`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <NextTopLoader />
+          {!isLoginPage && <Navbar />}  
+          {!isLoginPage && <NextTopLoader />}  
           {children}
           <Toaster />
+          {!isLoginPage && <Footer />}  
         </ThemeProvider>
       </body>
     </html>
