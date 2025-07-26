@@ -45,6 +45,7 @@ const Discussion = () => {
 
     //Initial file
     const [file, setFile] = useState<DiscussionFile[]>([]);
+    const [additionalFile, setAdditionalFile] = useState<File[]>([]);
 
     //Bootomref
     const bottomRef = useRef<HTMLDivElement>(null);
@@ -140,6 +141,45 @@ const Discussion = () => {
     //Send message
     const sendMessage = async () => {
         if (!inputPrompt.trim()) return;
+        let fileData: DiscussionFile[] = []
+
+        //Handle material file
+        if (file) {
+            for (const item of file) {
+                //Push fileData
+                fileData.push({
+                    id: item.id,
+                    name: item.name,
+                    path: item.path,
+                    from: "material"
+                });
+            }
+        }
+
+        //Handle additional file
+        if (additionalFile) {
+            for (const item of additionalFile) {
+                //Upload to storage supabase
+                const { data, error } = await supabase.storage
+                    .from("materialfiles")
+                    .upload(`discussion/${Date.now()}-${item.name}`, item);
+
+                if (error) {
+                    throw new Error(error.message);
+                }
+                const publicUrl = supabase.storage
+                    .from("materialfiles")
+                    .getPublicUrl(data.path).data.publicUrl;
+
+                //Push fileData
+                fileData.push({
+                    id: '' + Math.random(),
+                    name: item.name,
+                    path: publicUrl,
+                    from: "additional"
+                });
+            }
+        }
 
         setLoadingSendMessage(true);
         try {
@@ -150,7 +190,7 @@ const Discussion = () => {
                 },
                 body: JSON.stringify({
                     prompt: inputPrompt,
-                    file: file || null
+                    file: fileData || null
                 })
             });
 
@@ -171,6 +211,11 @@ const Discussion = () => {
             setInputPrompt('');
             setLoadingSendMessage(false);
         }
+    };
+    const inputRef = useRef<HTMLInputElement>(null);
+
+    const handleButtonClick = () => {
+        inputRef.current?.click();
     };
 
     //Regenerate answer
@@ -255,15 +300,18 @@ const Discussion = () => {
             );
 
             if (exists) {
-                // Hapus file jika sudah ada
+                // Delete when file exists
                 return prev.filter(f =>
                     !(f.id === id && f.name === name && f.path === path && f.from === from)
                 );
             } else {
-                // Tambahkan file
+                // Add file
                 return [...prev, { id, name, path, from }];
             }
         });
+    };
+    const handleDeleteFile = (index: number) => {
+        setAdditionalFile(prev => prev.filter((_, i) => i !== index));
     };
 
 
@@ -440,7 +488,7 @@ const Discussion = () => {
                                                             <button
                                                                 key={fileItem.id}
                                                                 onClick={() => toggleFile(fileItem.id, fileItem.file_name, fileItem.file_url, 'material')}
-                                                                className={`border p-2 rounded-sm transition ${isSelected ? 'bg-green-700 text-white' : 'bg-neutral-900 text-white'
+                                                                className={`border p-2 rounded-sm transition ${isSelected ? 'bg-yellow-400 text-black' : 'bg-neutral-900 text-white'
                                                                     }`}
                                                             >
                                                                 {fileItem.file_name}
@@ -457,64 +505,91 @@ const Discussion = () => {
 
                                         {/* Hidden File Input */}
                                         <input
+                                            ref={inputRef}
                                             type="file"
                                             accept="application/pdf"
-                                            style={{ display: 'none' }}
+                                            style={{ display: "none" }}
+                                            onChange={(e) => {
+                                                const file = e.target.files?.[0];
+                                                if (file) {
+                                                    setAdditionalFile(prev => [...prev, file]);
+                                                }
+                                            }}
                                         />
 
                                         {/* Trigger Button */}
                                         <button
+                                            type="button"
+                                            onClick={handleButtonClick}
                                             className="w-full p-2 rounded-sm bg-neutral-900 flex flex-col justify-center items-center border border-dashed"
                                         >
                                             <LucideNotepadText className="py-4 w-20 h-20 border rounded-sm mb-2" />
                                             <p>Klik untuk Upload File</p>
-                                            <AlertDialogDescription>
-                                                File pdf
-                                            </AlertDialogDescription>
+                                            <p className="text-sm text-gray-400">File PDF</p>
                                         </button>
 
                                         {/* File List */}
                                         <div className="flex gap-2 flex-col mt-4">
-                                            <div
-                                                className="flex gap-2 items-center p-2 rounded"
-                                            >
-                                                <LucideNotepadText className="w-9 h-9 border p-1.5 rounded-sm bg-neutral-900" />
-                                                <div className="flex-1">
-                                                    <p className="text-sm">Nama File</p>
-                                                    <AlertDialogDescription className="text-xs">
-                                                        1 MB
-                                                    </AlertDialogDescription>
+                                            {additionalFile.map((file, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="flex gap-2 items-center p-2 rounded border bg-neutral-800 text-white"
+                                                >
+                                                    <LucideNotepadText className="w-9 h-9 border p-1.5 rounded-sm bg-neutral-900" />
+                                                    <div className="flex-1">
+                                                        <p className="text-sm">{file.name}</p>
+                                                        <p className="text-xs text-gray-400">
+                                                            {(file.size / (1024 * 1024)).toFixed(2)} MB
+                                                        </p>
+                                                    </div>
+                                                    <button onClick={() => handleDeleteFile(index)}>
+                                                        <X className="w-6 h-6 hover:text-red-500" />
+                                                    </button>
                                                 </div>
-                                                <button>
-                                                    <X className="w-6 h-6" />
-                                                </button>
-                                            </div>
+                                            ))}
                                         </div>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                         <AlertDialogCancel>Batal</AlertDialogCancel>
-                                        <AlertDialogAction className="bg-yellow-400">Ya</AlertDialogAction>
+                                        <AlertDialogAction className="bg-yellow-400">Oke</AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
 
                             <div className="flex gap-3 ms-1">
-                                {/* File Preview */}
-                                <div className="mt-2 flex items-center space-x-2 text-sm text-gray-400">
-                                    <div className="flex items-center space-x-2 bg-[#1a1a1a] rounded-lg px-3 py-2">
-                                        <Paperclip className="w-4 h-4" />
-                                        <span>materi.cnbsk.pdf</span>
-                                    </div>
-                                </div>
+                                {
+                                    [...file, ...additionalFile].length > 0 && (
+                                        <>
+                                            {/* Tampilkan file pertama */}
+                                            <div className="mt-2 flex items-center space-x-2 text-sm text-gray-400">
+                                                <div className="flex items-center space-x-2 bg-[#1a1a1a] rounded-lg px-3 py-2">
+                                                    <Paperclip className="w-4 h-4" />
+                                                    <span>
+                                                        {
+                                                            // Ambil nama dari DiscussionFile atau File
+                                                            'name' in [...file, ...additionalFile][0]
+                                                                ? [...file, ...additionalFile][0].name
+                                                                : [...file, ...additionalFile][0].file_name
+                                                        }
+                                                    </span>
+                                                </div>
+                                            </div>
 
-                                {/* File Preview */}
-                                <div className="mt-2 flex items-center space-x-2 text-sm text-gray-400">
-                                    <div className="flex items-center space-x-2 bg-[#1a1a1a] rounded-lg px-3 py-2">
-                                        <Paperclip className="w-4 h-4" />
-                                        <span>2 file lainnya</span>
-                                    </div>
-                                </div>
+                                            {
+                                                [...file, ...additionalFile].length > 1 && (
+                                                    <div className="mt-2 flex items-center space-x-2 text-sm text-gray-400">
+                                                        <div className="flex items-center space-x-2 bg-[#1a1a1a] rounded-lg px-3 py-2">
+                                                            <Paperclip className="w-4 h-4" />
+                                                            <span>{[...file, ...additionalFile].length - 1} file lainnya</span>
+                                                        </div>
+                                                    </div>
+                                                )
+                                            }
+                                        </>
+                                    )
+                                }
                             </div>
+
                         </div>
                     </div>
                 </div>
