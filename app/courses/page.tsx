@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Clock, User, Search, FileText } from "lucide-react";
+import { Clock, User, Search, FileText, LucideNotepadText } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
 
@@ -21,8 +21,7 @@ interface MaterialType {
   id: string;
   name: string;
   course_id: string;
-
-  course?: { name: string };
+  course?: { name: string }; // relasi dari foreign key
   created_at: string;
 }
 
@@ -207,7 +206,7 @@ export default function Courses() {
                       className="flex items-center justify-between bg-dark-font border border-card-border/10 rounded-md p-3"
                     >
                       <div className="flex items-center gap-3">
-                        <FileText size={20} className="text-primary" />
+                      <LucideNotepadText className="border rounded p-2 w-10 h-10 bg-neutral-800" />
                         <div>
                           <p className="text-white font-medium">
                             {material.name}

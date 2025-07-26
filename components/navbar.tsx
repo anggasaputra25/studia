@@ -42,8 +42,12 @@ export default function Navbar() {
     }
   };
 
-  const isActive = (path: string) => {
-    return pathname === path;
+  const isActive = (path: string, exact: boolean = true) => {
+    if (exact) {
+      return pathname === path;
+    }
+
+    return pathname.startsWith(path);
   };
 
   return (
@@ -74,7 +78,7 @@ export default function Navbar() {
             <Link
               href="/"
               className={`hover:text-primary transition-colors duration-200 ${
-                isActive("/") ? "text-primary" : ""
+                isActive("/", true) ? "text-primary" : ""
               }`}
             >
               Beranda
@@ -84,7 +88,7 @@ export default function Navbar() {
             <Link
               href="/courses"
               className={`hover:text-primary transition-colors duration-200 ${
-                isActive("/courses") ? "text-primary" : ""
+                isActive("/courses", false) ? "text-primary" : ""
               }`}
             >
               Kelas
@@ -146,7 +150,7 @@ export default function Navbar() {
           </div>
         ) : (
           <Link href="/auth/login">
-            <button className="hidden md:block bg-primary hover:bg-primary-darker text-dark-font font-semibold py-2 px-6 rounded-lg shadow-md shadow-primary-darker transition-all duration-300 transform">
+            <button className="hidden md:block bg-primary hover:bg-primary-darker text-background font-semibold py-2 px-6 rounded-lg shadow-md drop-shadow-[0px_4px_0px#FFAE00] transition-all duration-300 transform">
               Masuk
             </button>
           </Link>
@@ -160,7 +164,7 @@ export default function Navbar() {
               <Link
                 href="/"
                 className={`block hover:text-primary transition-colors duration-200 ${
-                  isActive("/") ? "text-primary" : ""
+                  isActive("/", true) ? "text-primary" : ""
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -171,7 +175,7 @@ export default function Navbar() {
               <Link
                 href="/courses"
                 className={`block hover:text-primary transition-colors duration-200 ${
-                  isActive("/courses") ? "text-primary" : ""
+                  isActive("/courses", false) ? "text-primary" : ""
                 }`}
                 onClick={() => setIsMobileMenuOpen(false)}
               >
@@ -238,7 +242,7 @@ export default function Navbar() {
             ) : (
               <li>
                 <Link href="/auth/login">
-                  <button className="bg-primary hover:bg-primary-darker text-dark-font font-semibold py-2 px-6 rounded-lg shadow-md shadow-primary-darker transition-all duration-300 transform">
+                  <button className="bg-primary hover:bg-primary-darker text-background font-semibold py-2 px-6 rounded-lg shadow-md drop-shadow-[0px_4px_0px#FFAE00] transition-all duration-300 transform">
                     Masuk
                   </button>
                 </Link>
