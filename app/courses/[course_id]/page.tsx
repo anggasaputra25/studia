@@ -37,7 +37,7 @@ export default function Page() {
                 .single()
 
             if (error) {
-                console.log("Gagal Fetch Courses");
+                console.log("Failed Fetch Courses");
                 return;
             }
             setCourse(data);

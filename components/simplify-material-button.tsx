@@ -1,5 +1,5 @@
 'use client'
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -29,7 +29,6 @@ interface MaterialFile {
 
 export default function SimplifyMaterialButton() {
     const params = useParams();
-    const searchParams = useSearchParams();
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
     const [files, setFiles] = useState<File[]>([]);
@@ -37,7 +36,6 @@ export default function SimplifyMaterialButton() {
     const [selectedUrls, setSelectedUrls] = useState<string[]>([]);
     const [loadingGenerate, setLoadingGenerate] = useState<boolean>(false);
 
-    const tab = searchParams.get('tab');
     const courseId = params.course_id;
     const material_id = params.material_id;
 

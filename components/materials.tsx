@@ -54,7 +54,7 @@ export default function MaterialPage() {
                 .single();
 
             if (error) {
-                console.log("Gagal Fetch Courses");
+                console.log("Failed Fetch Courses");
                 return;
             }
             setCourse(data);
@@ -68,7 +68,7 @@ export default function MaterialPage() {
                 .eq('course_id', courseId);
 
             if (error) {
-                console.log("Gagal Fetch Materials");
+                console.log("Failed Fetch Materials");
                 return;
             }
 
@@ -81,7 +81,7 @@ export default function MaterialPage() {
                     .eq('material_id', material.id);
 
                 if (filesError) {
-                    console.warn(`Gagal fetch material_files untuk material_id: ${material.id}`, filesError);
+                    console.warn(`Failed fetch material_files to material_id: ${material.id}`, filesError);
                 }
 
                 materialsWithFiles.push({
