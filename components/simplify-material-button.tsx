@@ -118,6 +118,7 @@ export default function SimplifyMaterialButton() {
             console.log("Failed submit: ", error)
         } finally {
             setLoadingGenerate(false);
+            window.location.reload();
         }
     };
 
@@ -211,7 +212,7 @@ export default function SimplifyMaterialButton() {
             <AlertDialog open={loadingGenerate}>
                 <AlertDialogContent className="h-1/2">
                     <AlertDialogHeader className="flex flex-col justify-center items-center">
-                        <Brain className="text-yellow-500 w-20 h-20 mb-5 animate-spin ease-linear" style={{ animationDuration: "10s" }} />
+                        <Brain className="text-yellow-500 w-20 h-20 mb-5 animate-bounce ease-linear" />
                         <AlertDialogTitle>Materi sedang disederhanakan</AlertDialogTitle>
                         <AlertDialogDescription className="text-center">
                             Tunggu hingga selesai. Ini mungkin memakan<br />waktu yang banyak.
