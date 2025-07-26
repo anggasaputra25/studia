@@ -27,6 +27,7 @@
     "react-markdown": "^8.0.7",
     "sonner": "^2.0.6",
     "tailwind-merge": "^3.3.0",
+    "use-debounce": "^10.0.5",
     "zod": "^4.0.10"
   },
   "devDependencies": {
