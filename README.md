@@ -1,105 +1,220 @@
-<a href="https://demo-nextjs-with-supabase.vercel.app/">
-  <img alt="Next.js and Supabase Starter Kit - the fastest way to build apps with Next.js and Supabase" src="https://demo-nextjs-with-supabase.vercel.app/opengraph-image.png">
-  <h1 align="center">Next.js and Supabase Starter Kit</h1>
-</a>
+# 📚 Studia
 
-<p align="center">
- The fastest way to build apps with Next.js and Supabase
-</p>
+Studia adalah platform pembelajaran berbasis web yang dirancang untuk membantu mahasiswa dalam memahami materi kuliah secara lebih efektif. Dengan menggunakan teknologi terkini seperti *Next.js, **Tailwind CSS, **Supabase, dan **Gemini AI*, Studia menyederhanakan materi, menyediakan kuis otomatis, dan menghadirkan diskusi interaktif dengan AI.
 
-<p align="center">
-  <a href="#features"><strong>Features</strong></a> ·
-  <a href="#demo"><strong>Demo</strong></a> ·
-  <a href="#deploy-to-vercel"><strong>Deploy to Vercel</strong></a> ·
-  <a href="#clone-and-run-locally"><strong>Clone and run locally</strong></a> ·
-  <a href="#feedback-and-issues"><strong>Feedback and issues</strong></a>
-  <a href="#more-supabase-examples"><strong>More Examples</strong></a>
-</p>
-<br/>
+## 🚀 Fitur Utama
 
-## Features
+1. *Simplify Materi*
 
-- Works across the entire [Next.js](https://nextjs.org) stack
-  - App Router
-  - Pages Router
-  - Middleware
-  - Client
-  - Server
-  - It just works!
-- supabase-ssr. A package to configure Supabase Auth to use cookies
-- Password-based authentication block installed via the [Supabase UI Library](https://supabase.com/ui/docs/nextjs/password-based-auth)
-- Styling with [Tailwind CSS](https://tailwindcss.com)
-- Components with [shadcn/ui](https://ui.shadcn.com/)
-- Optional deployment with [Supabase Vercel Integration and Vercel deploy](#deploy-your-own)
-  - Environment variables automatically assigned to Vercel project
+   - Dosen dapat mengunggah materi pembelajaran.
+   - Mahasiswa dapat menyederhanakan materi tersebut dengan bantuan AI Gemini.
+   - Mahasiswa juga dapat mengunggah file mandiri untuk disederhanakan.
 
-## Demo
+2. *Generate Quiz dengan AI*
 
-You can view a fully working demo at [demo-nextjs-with-supabase.vercel.app](https://demo-nextjs-with-supabase.vercel.app/).
+   - AI Gemini menghasilkan pertanyaan kuis dari materi unggahan.
+   - Mahasiswa juga dapat mengunggah file mandiri untuk menghasilkan kuis personal.
 
-## Deploy to Vercel
+3. *Diskusi Interaktif dengan AI*
+   - Chat interaktif seputar materi dengan AI.
+   - Bisa langsung mengupload file dan berdiskusi dengan AI.
 
-Vercel deployment will guide you through creating a Supabase account and project.
+## 🛠️ Teknologi yang Digunakan
 
-After installation of the Supabase integration, all relevant environment variables will be assigned to the project so the deployment is fully functioning.
+- *Next.js* – Framework React modern untuk SSR dan pengelolaan halaman.
+- *Tailwind CSS* – Utility-first CSS framework untuk styling yang cepat dan konsisten.
+- *Supabase* – Backend as a Service yang menyediakan database, auth, dan storage.
+- *Gemini AI (Google AI)* – Digunakan untuk menyederhanakan materi, membuat kuis, dan chat berbasis materi.
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&project-name=nextjs-with-supabase&repository-name=nextjs-with-supabase&demo-title=nextjs-with-supabase&demo-description=This+starter+configures+Supabase+Auth+to+use+cookies%2C+making+the+user%27s+session+available+throughout+the+entire+Next.js+app+-+Client+Components%2C+Server+Components%2C+Route+Handlers%2C+Server+Actions+and+Middleware.&demo-url=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2F&external-id=https%3A%2F%2Fgithub.com%2Fvercel%2Fnext.js%2Ftree%2Fcanary%2Fexamples%2Fwith-supabase&demo-image=https%3A%2F%2Fdemo-nextjs-with-supabase.vercel.app%2Fopengraph-image.png)
+## 📁 Struktur Folder
 
-The above will also clone the Starter kit to your GitHub, you can clone that locally and develop locally.
+bash
+studia/
+├── app/                        # Routing dan page level components
+│   ├── auth/                   # Login/Register pages
+│   ├── courses/                # Course dan materi terkait
+│   └── api/                    # API routes (Next.js route handlers)
+├── components/                 # Komponen UI reusable
+│   ├── ui/                     # Shadcn UI, tombol, card, dialog, dll
+├── lib/                        # Helper, Supabase client, Gemini wrapper
+│   ├── supabase/               # Supabase client dan API util
+│   └── gemini/                 # Konfigurasi dan request Gemini API
+├── public/                     # Aset statis
+├── middleware.ts               # Proteksi route (auth middleware)
+├── tailwind.config.ts          # Konfigurasi Tailwind
+├── tsconfig.json               # Konfigurasi TypeScript
+└── README.md                   # Dokumentasi proyek
 
-If you wish to just develop locally and not deploy to Vercel, [follow the steps below](#clone-and-run-locally).
 
-## Clone and run locally
+## 🎓 Arsitektur Studia
 
-1. You'll first need a Supabase project which can be made [via the Supabase dashboard](https://database.new)
+1. 🔐 Authentication
 
-2. Create a Next.js app using the Supabase Starter template npx command
+   - Login menggunakan Supabase Auth (email/password) & google
 
-   ```bash
-   npx create-next-app --example with-supabase with-supabase-app
-   ```
+2. 📚 Materi Pembelajaran
 
-   ```bash
-   yarn create next-app --example with-supabase with-supabase-app
-   ```
+   - Dosen meng-upload materi (PDF) ke Supabase Storage
+   - Data metadata materi disimpan di Supabase Database (tabel materials)
 
-   ```bash
-   pnpm create next-app --example with-supabase with-supabase-app
-   ```
+3. 🧠 Simplify Materi Menggunakan AI
 
-3. Use `cd` to change into the app's directory
+   - Mahasiswa memilih file yang sudah ada, ataupun mengunggah file mandiri
+   - Mahasiswa klik tombol "Mulai"
+   - Materi dikirim ke Google Gemini untuk disederhanakan
+   - Hasil disimpan ke tabel simplify_materials
 
-   ```bash
-   cd with-supabase-app
-   ```
+4. ❓ Quiz Generator
 
-4. Rename `.env.example` to `.env.local` and update the following:
+   - AI Gemini menghasilkan kuis berbasis materi yang di-upload
+   - Format: Multiple Choice
+   - Dapat berasal dari materi dosen atau upload mandiri mahasiswa
 
-   ```
-   NEXT_PUBLIC_SUPABASE_URL=[INSERT SUPABASE PROJECT URL]
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=[INSERT SUPABASE PROJECT API ANON KEY]
-   ```
+5. 💬 Diskusi AI
 
-   Both `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` can be found in [your Supabase project's API settings](https://supabase.com/dashboard/project/_?showConnect=true)
+   - Chatbot berbasis Gemini AI dengan konteks materi yang diberikan
+   - Mendukung upload file mandiri dan tanya jawab
 
-5. You can now run the Next.js local development server:
+6. 🗂️ Penyimpanan
+   - File materi: Supabase Storage
+   - Metadata: Supabase Database
 
-   ```bash
-   npm run dev
-   ```
+## 📦 Database Struktur (Supabase)
 
-   The starter kit should now be running on [localhost:3000](http://localhost:3000/).
+📄 *users*
 
-6. This template comes with the default shadcn/ui style initialized. If you instead want other ui.shadcn styles, delete `components.json` and [re-install shadcn/ui](https://ui.shadcn.com/docs/installation/next)
+- id
+- name
+- role
+- created_at
 
-> Check out [the docs for Local Development](https://supabase.com/docs/guides/getting-started/local-development) to also run Supabase locally.
+📄 *courses*
 
-## Feedback and issues
+- id
+- name
+- program
+- instructor
+- weeks
+- time_start
+- time_end
+- student_count
+- created_at
 
-Please file feedback and issues over on the [Supabase GitHub org](https://github.com/supabase/supabase/issues/new/choose).
+📄 *materials*
 
-## More Supabase examples
+- id
+- name
+- course_id (FK → courses)
+- created_at
 
-- [Next.js Subscription Payments Starter](https://github.com/vercel/nextjs-subscription-payments)
-- [Cookie-based Auth and the Next.js 13 App Router (free course)](https://youtube.com/playlist?list=PL5S4mPUpp4OtMhpnp93EFSo42iQ40XjbF)
-- [Supabase Auth and the Next.js App Router](https://github.com/supabase/supabase/tree/master/examples/auth/nextjs)
+📄 *material_files*
+
+- id
+- material_id (FK → materials)
+- file_name
+- file_path
+- file_url
+- created_at
+
+📄 *simplify_materials*
+
+- id
+- material_id (FK → materials)
+- student_id (FK → users)
+- title
+- simplified_content
+- created_at
+
+📄 *quiz*
+
+- id
+- course_id (FK → courses)
+- student_id (FK → users)
+- title
+- question_count
+- poin_per_question
+- attended
+- finished
+- created_at
+
+📄 *quiz_questions*
+
+- id
+- quiz_id (FK → quiz)
+- number
+- question
+- option_a / b / c / d
+- correct_answer
+- created_at
+
+📄 *quiz_answer*
+
+- id
+- qq_id (FK → quiz_questions)
+- student_id (FK → users)
+- option
+- student_answer
+- is_correct
+- created_at
+
+📄 *quiz_result*
+
+- id
+- quiz_id (FK → quiz)
+- student_id (FK → users)
+- total_point
+- created_at
+
+📄 *discussion*
+
+- id
+- course_id (FK → courses)
+- student_id (FK → users)
+- prompt
+- answer
+- created_at
+
+📄 *discussion_files*
+
+- id
+- discussion_id (FK → discussion)
+- mf_id (FK → material_files)
+- created_at
+
+📄 *additional_discussion_files*
+
+- id
+- discussion_id (FK → discussion)
+- file_name
+- file_type
+- file_path
+- created_at
+
+## 📌 Cara Menjalankan
+
+bash
+# Install dependencies
+npm install
+
+# Jalankan pengembangan lokal
+npm run dev
+
+
+Pastikan .env.local terisi dengan:
+
+bash
+NEXT_PUBLIC_SUPABASE_URL=https://jyclbbpodkkecxttswcq.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imp5Y2xiYnBvZGtrZWN4dHRzd2NxIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0OTA4NDksImV4cCI6MjA2OTA2Njg0OX0.CrkmY4vEhjIctyFoKNvEFa_tFeWnR-qard7ZUPQjAvM
+GEMINI_API_KEY=AIzaSyBGpO4EWgga1Nij3xDed0kKsfK6MFBD3rY
+
+
+## 🤝 Kontributor
+
+- I Ketut Danar Cahyadi
+- I Putu Adi Saputra
+- I Ketut Angga Saputra
+- I Komang Gede Sutrisna
+
+## 📜 Lisensi
+
+All rights reserved. © 2025 Studia Team.
